@@ -133,4 +133,4 @@ restoration_records_sf <- restoration_polygons_sf[restoration_polygons_sf$Prj_ID
 object.size(restoration_records_sf)
 getwd()
 
-st_write(restoration_records_sf, "C:/Users/Kristina/OneDrive - New Mexico State University/Desktop/GIT REPOs/DART_LTDL/DART_LTDL/data/restoration_records_sf.shp")
+st_write(restoration_records_sf, "C:/Users/Kristina/OneDrive - New Mexico State University/Desktop/GIT REPOs/SPATIAL_FILES/data/restoration_records_sf.shp")
