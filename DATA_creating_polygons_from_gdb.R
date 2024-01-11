@@ -20,6 +20,9 @@ library(beepr)
 # install.packages(lub)
 library(lubridate)
 # Attach lubridate to work on dates
+library(terra)
+# Attach terra to work on raster and spatial data
+library(raster)
 
 #### CONFIG ####
 # Setting the path to the geodatabase 
@@ -134,3 +137,31 @@ object.size(restoration_records_sf)
 getwd()
 
 st_write(restoration_records_sf, "C:/Users/Kristina/OneDrive - New Mexico State University/Desktop/GIT REPOs/SPATIAL_FILES/data/restoration_records_sf.shp")
+
+##### Cutting the polygons to rasters from the Colorado Plateau ####
+
+# Directly specify the file path
+extent_raster <- "C:/Users/Kristina/OneDrive - New Mexico State University/Desktop/GIT REPOs/SPATIAL_FILES/Covariates/sgu_1stClass.tif"
+# making the file a raster in terra
+coloradoplateau_raster <- rast(extent_raster)
+crs(coloradoplateau_raster, describe = TRUE)
+
+# specifying the path to shapefiles
+LTDL_path <- "C:/Users/Kristina/OneDrive - New Mexico State University/Desktop/GIT REPOs/SPATIAL_FILES/data/restoration_records_sf.shp"
+
+# read the polygons as a vector shape file
+LTDL_polygons <- vect(LTDL_path)
+plot(LTDL_polygons, main = "SpatVector from file")
+crs(LTDL_polygons, describe = TRUE)
+
+albers_crs <- "+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=37.5 +lon_0=-96 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs"
+LTDL_polygons_albers <- project(LTDL_polygons, albers_crs)
+
+# select polygons that fall within the extent of the rest
+coloradoplateau_polygons <- crop(LTDL_polygons_albers, coloradoplateau_raster )
+plot(coloradoplateau_polygons, main = "SpatVector from file")
+
+output_path_crop <- "C:/Users/Kristina/OneDrive - New Mexico State University/Desktop/GIT REPOs/SPATIAL_FILES/data/coloradoplateau_polygons.shp"
+
+writeVector(coloradoplateau_polygons, output_path_crop, overwrite=FALSE)
+
